@@ -19,14 +19,16 @@ class _$BookTearOff {
   _Book call(
       {required String id,
       required String name,
-      required String category,
+      required int categoryID,
+      required String categoryDescription,
       required int firstPage,
       required int lastPage,
       required int count}) {
     return _Book(
       id: id,
       name: name,
-      category: category,
+      categoryID: categoryID,
+      categoryDescription: categoryDescription,
       firstPage: firstPage,
       lastPage: lastPage,
       count: count,
@@ -41,7 +43,8 @@ const $Book = _$BookTearOff();
 mixin _$Book {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get category => throw _privateConstructorUsedError;
+  int get categoryID => throw _privateConstructorUsedError;
+  String get categoryDescription => throw _privateConstructorUsedError;
   int get firstPage => throw _privateConstructorUsedError;
   int get lastPage => throw _privateConstructorUsedError;
   int get count => throw _privateConstructorUsedError;
@@ -57,7 +60,8 @@ abstract class $BookCopyWith<$Res> {
   $Res call(
       {String id,
       String name,
-      String category,
+      int categoryID,
+      String categoryDescription,
       int firstPage,
       int lastPage,
       int count});
@@ -75,7 +79,8 @@ class _$BookCopyWithImpl<$Res> implements $BookCopyWith<$Res> {
   $Res call({
     Object? id = freezed,
     Object? name = freezed,
-    Object? category = freezed,
+    Object? categoryID = freezed,
+    Object? categoryDescription = freezed,
     Object? firstPage = freezed,
     Object? lastPage = freezed,
     Object? count = freezed,
@@ -89,9 +94,13 @@ class _$BookCopyWithImpl<$Res> implements $BookCopyWith<$Res> {
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      category: category == freezed
-          ? _value.category
-          : category // ignore: cast_nullable_to_non_nullable
+      categoryID: categoryID == freezed
+          ? _value.categoryID
+          : categoryID // ignore: cast_nullable_to_non_nullable
+              as int,
+      categoryDescription: categoryDescription == freezed
+          ? _value.categoryDescription
+          : categoryDescription // ignore: cast_nullable_to_non_nullable
               as String,
       firstPage: firstPage == freezed
           ? _value.firstPage
@@ -117,7 +126,8 @@ abstract class _$BookCopyWith<$Res> implements $BookCopyWith<$Res> {
   $Res call(
       {String id,
       String name,
-      String category,
+      int categoryID,
+      String categoryDescription,
       int firstPage,
       int lastPage,
       int count});
@@ -136,7 +146,8 @@ class __$BookCopyWithImpl<$Res> extends _$BookCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? name = freezed,
-    Object? category = freezed,
+    Object? categoryID = freezed,
+    Object? categoryDescription = freezed,
     Object? firstPage = freezed,
     Object? lastPage = freezed,
     Object? count = freezed,
@@ -150,9 +161,13 @@ class __$BookCopyWithImpl<$Res> extends _$BookCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      category: category == freezed
-          ? _value.category
-          : category // ignore: cast_nullable_to_non_nullable
+      categoryID: categoryID == freezed
+          ? _value.categoryID
+          : categoryID // ignore: cast_nullable_to_non_nullable
+              as int,
+      categoryDescription: categoryDescription == freezed
+          ? _value.categoryDescription
+          : categoryDescription // ignore: cast_nullable_to_non_nullable
               as String,
       firstPage: firstPage == freezed
           ? _value.firstPage
@@ -175,7 +190,8 @@ class _$_Book implements _Book {
   const _$_Book(
       {required this.id,
       required this.name,
-      required this.category,
+      required this.categoryID,
+      required this.categoryDescription,
       required this.firstPage,
       required this.lastPage,
       required this.count});
@@ -185,7 +201,9 @@ class _$_Book implements _Book {
   @override
   final String name;
   @override
-  final String category;
+  final int categoryID;
+  @override
+  final String categoryDescription;
   @override
   final int firstPage;
   @override
@@ -195,7 +213,7 @@ class _$_Book implements _Book {
 
   @override
   String toString() {
-    return 'Book(id: $id, name: $name, category: $category, firstPage: $firstPage, lastPage: $lastPage, count: $count)';
+    return 'Book(id: $id, name: $name, categoryID: $categoryID, categoryDescription: $categoryDescription, firstPage: $firstPage, lastPage: $lastPage, count: $count)';
   }
 
   @override
@@ -206,9 +224,12 @@ class _$_Book implements _Book {
                 const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.name, name) ||
                 const DeepCollectionEquality().equals(other.name, name)) &&
-            (identical(other.category, category) ||
+            (identical(other.categoryID, categoryID) ||
                 const DeepCollectionEquality()
-                    .equals(other.category, category)) &&
+                    .equals(other.categoryID, categoryID)) &&
+            (identical(other.categoryDescription, categoryDescription) ||
+                const DeepCollectionEquality()
+                    .equals(other.categoryDescription, categoryDescription)) &&
             (identical(other.firstPage, firstPage) ||
                 const DeepCollectionEquality()
                     .equals(other.firstPage, firstPage)) &&
@@ -224,7 +245,8 @@ class _$_Book implements _Book {
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(name) ^
-      const DeepCollectionEquality().hash(category) ^
+      const DeepCollectionEquality().hash(categoryID) ^
+      const DeepCollectionEquality().hash(categoryDescription) ^
       const DeepCollectionEquality().hash(firstPage) ^
       const DeepCollectionEquality().hash(lastPage) ^
       const DeepCollectionEquality().hash(count);
@@ -239,7 +261,8 @@ abstract class _Book implements Book {
   const factory _Book(
       {required String id,
       required String name,
-      required String category,
+      required int categoryID,
+      required String categoryDescription,
       required int firstPage,
       required int lastPage,
       required int count}) = _$_Book;
@@ -249,7 +272,9 @@ abstract class _Book implements Book {
   @override
   String get name => throw _privateConstructorUsedError;
   @override
-  String get category => throw _privateConstructorUsedError;
+  int get categoryID => throw _privateConstructorUsedError;
+  @override
+  String get categoryDescription => throw _privateConstructorUsedError;
   @override
   int get firstPage => throw _privateConstructorUsedError;
   @override

@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+
+import '../client/shared_pref_client.dart';
+import '../data/constants.dart';
 
 class DatabaseHelper {
-
-  static final String _assetsFolder = 'assets';
-  static final String _databasePath = 'database';
-  static final String _databaseName = 'tika_nsy.db';
+  // static final String _assetsFolder = 'assets';
+  // static final String _databasePath = 'database';
+  // static final String _databaseName = 'tika_nsy.db';
 
   DatabaseHelper._();
   static final DatabaseHelper _instance = DatabaseHelper._();
@@ -26,28 +27,61 @@ class DatabaseHelper {
 
 // Open Assets Database
   _initDatabase() async {
-    print('initializing Database');
-    var dbPath = await getDatabasesPath();
-    var path = join(dbPath, _databaseName);
+    // print('initializing Database');
+    var dbPathToStore = await getDatabasesPath();
+    var dbFilePath = join(dbPathToStore, DatabaseInfo.dbName);
 
-    var exists = await databaseExists(path);
-    if (!exists) {
-      print('creating new copy from asset');
-      try {
-        await Directory(dirname(path)).create(recursive: true);
-      } catch (_) {}
+    var exists = await databaseExists(dbFilePath);
 
-      // Copy from asset
-      ByteData data =
-          await rootBundle.load(join(_assetsFolder, _databasePath, _databaseName));
-      List<int> bytes =
-          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-
-      await File(path).writeAsBytes(bytes, flush: true);
-    } else {
-      print('opening existing database');
+    if (exists &&
+        SharedPreferenceClient.isInitialized &&
+        SharedPreferenceClient.databaseVerion == DatabaseInfo.dbVersion) {
+      // database is upto date
+      return await openDatabase(dbFilePath);
     }
-    return await openDatabase(path);
+
+    if (exists &&
+        SharedPreferenceClient.isInitialized &&
+        SharedPreferenceClient.databaseVerion < DatabaseInfo.dbVersion) {
+      // database is outdated
+
+      // deleting old database
+      await deleteDatabase(dbFilePath);
+      // saving new database
+      await _saveDatabaseFromAssets(dbFilePath: dbFilePath);
+
+      return await openDatabase(dbFilePath);
+    }
+
+    // database is not initialized
+
+    // make sure destination path is created
+    try {
+      await Directory(dirname(dbPathToStore)).create(recursive: true);
+    } catch (_) {}
+    // saving database
+    await _saveDatabaseFromAssets(dbFilePath: dbFilePath);
+
+    return await openDatabase(dbFilePath);
+  }
+
+  Future<void> _saveDatabaseFromAssets({required String dbFilePath}) async {
+    // Copy from asset
+    final dbFileAssetsPath = join(DatabaseInfo.assetsPath, DatabaseInfo.dbName);
+    await _copyDatabase(assetsPath: dbFileAssetsPath, destination: dbFilePath);
+
+    // save to pref
+    SharedPreferenceClient.isInitialized = true;
+    SharedPreferenceClient.databaseVerion = DatabaseInfo.dbVersion;
+  }
+
+  Future<void> _copyDatabase(
+      {required String assetsPath, required String destination}) async {
+    ByteData data = await rootBundle.load(assetsPath);
+    List<int> bytes =
+        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+
+    await File(destination).writeAsBytes(bytes, flush: true);
   }
 
   Future close() async {

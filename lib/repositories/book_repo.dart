@@ -1,5 +1,5 @@
-import 'package:tika_nissaya/models/book.dart';
-import 'package:tika_nissaya/repositories/database.dart';
+import '../models/book.dart';
+import 'database.dart';
 
 abstract class BookRepository {
   Future<List<Book>> fetchBooks();
@@ -16,7 +16,8 @@ class DatabaseBookRepository extends BookRepository {
     final results = await db.query(bookDao.tableName, columns: [
       bookDao.columnID,
       bookDao.columnName,
-      bookDao.columnCategory,
+      bookDao.columnCategoryID,
+      bookDao.columnCategoryDescription,
       bookDao.columnFirstPage,
       bookDao.columnLastPage,
       bookDao.columnCount

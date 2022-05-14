@@ -35,23 +35,25 @@ class SectionListView extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.grey[200],
             // border: Border.all(color: Colors.blueAccent),
-            borderRadius: BorderRadius.all(Radius.circular(35))),
+            borderRadius: const BorderRadius.all(Radius.circular(35))),
         child: ListView.builder(
             shrinkWrap: true,
             itemCount: sectionList.length,
             itemBuilder: (_, index) {
-              return Container(
+              return SizedBox(
                 height: 36.0,
+                width: double.infinity,
                 child: ListTile(
-                  onTap: () => itemScrollController?.jumpTo(
-                      index: sectionList[index] - firstPage),
                   minVerticalPadding: 0.0,
-                  contentPadding: EdgeInsets.symmetric(vertical: 0.0),
-                  title: Center(
-                      child: Text(
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
+                  title: Text(
                     '${sectionList[index]}',
-                    style: TextStyle(fontSize: 12.0),
-                  )),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12.0),
+                  ),
+                  onTap: () => itemScrollController?.scrollTo(
+                      index: sectionList[index] - firstPage,
+                      duration: const Duration(milliseconds: 300)),
                 ),
               );
             }),

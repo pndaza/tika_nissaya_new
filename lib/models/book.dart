@@ -7,7 +7,8 @@ class Book with _$Book {
   const factory Book(
       {required String id,
       required String name,
-      required String category,
+      required int categoryID,
+      required String categoryDescription,
       required int firstPage,
       required int lastPage,
       required int count}) = _Book;
@@ -17,7 +18,8 @@ class BookDao {
   final tableName = 'pali_books';
   final columnID = 'id';
   final columnName = 'name';
-  final columnCategory = 'category';
+  final columnCategoryID = 'category_id';
+  final columnCategoryDescription = 'category_description';
   final columnFirstPage = 'first_page';
   final columnLastPage = 'last_page';
   final columnCount = 'count';
@@ -26,7 +28,8 @@ class BookDao {
     return Book(
       id: map[columnID] as String,
       name: map[columnName] as String,
-      category: map[columnCategory] as String,
+      categoryID: map[columnCategoryID] as int,
+      categoryDescription: map[columnCategoryDescription] as String,
       firstPage: map[columnFirstPage] as int,
       lastPage: map[columnLastPage] as int,
       count: map[columnCount] as int,

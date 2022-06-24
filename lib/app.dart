@@ -17,8 +17,8 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Atthakatha Nissaya',
-      theme: ThemeData(primarySwatch: Colors.pink),
+      title: 'Tika Nissaya',
+      theme: ThemeData(primarySwatch: Colors.teal),
       darkTheme: ThemeData.dark(),
       themeMode: themeMode,
       home: StreamBuilder<String>(

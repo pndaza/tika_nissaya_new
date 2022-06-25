@@ -1,5 +1,5 @@
 name: tika_nissaya
-description: A new Flutter project.
+description: Word-to-Word translation of Tika Pali.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -39,12 +39,20 @@ dev_dependencies:
   freezed: ^1.1.1
   build_runner:
   flutter_launcher_icons: ^0.9.0
+  msix: ^3.6.2
 
 
 flutter_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/icon/icon.jpg"
+
+msix_config:
+  display_name: Tika Nissaya
+  publisher_display_name: PnDaza
+  identity_name: mm.pndaza.tikanissaya
+  msix_version: 1.0.0.0
+  # logo_path: C:\path\to\logo.png
 
 # The following section is specific to Flutter.
 flutter:

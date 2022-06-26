@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/services.dart';
 
@@ -8,7 +9,7 @@ import 'package:flutter/services.dart';
 //   return deepLinkHandler;
 // });
 
-class DeepLinkHandler{
+class DeepLinkHandler {
   //Event Channel creation
   static const stream = EventChannel('mm.pndaza.tikanissaya/events');
 
@@ -40,6 +41,9 @@ class DeepLinkHandler{
   }
 
   Future<String> startUri() async {
+    
+    if (Platform.isWindows) return 'not support now';
+
     try {
       final initialLink = await platform.invokeMethod('initialLink') as String;
       // print('initialLink: $initialLink');

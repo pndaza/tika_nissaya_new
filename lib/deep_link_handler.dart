@@ -41,8 +41,7 @@ class DeepLinkHandler {
   }
 
   Future<String> startUri() async {
-    
-    if (Platform.isWindows) return 'not support now';
+    if (Platform.isWindows || Platform.isMacOS) return 'not support now';
 
     try {
       final initialLink = await platform.invokeMethod('initialLink') as String;

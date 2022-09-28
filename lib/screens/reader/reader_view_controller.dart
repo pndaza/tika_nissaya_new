@@ -1,8 +1,8 @@
+import 'package:asset_pdf_viewer/asset_pdf_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../client/shared_pref_client.dart';
-import '../../packages/native_pdf_renderer/pdf_page_view.dart';
 
 final fullScreenStateProvider = StateProvider((_) => false);
 final appBarHeight = StateProvider<double>((ref) {
@@ -59,3 +59,5 @@ class ReaderViewController {
     ref.read(fullScreenStateProvider.notifier).state = !screenMode;
   }
 }
+
+

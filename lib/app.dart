@@ -1,8 +1,10 @@
 import 'dart:async';
 
-import 'package:app_links/app_links.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uni_links/uni_links.dart';
 
 import 'deep_link_handler.dart';
 import 'screens/home/home_page.dart';
@@ -25,9 +27,8 @@ class MyApp extends ConsumerStatefulWidget {
 class MyAppState extends ConsumerState<MyApp> {
   final _navigatorKey = GlobalKey<NavigatorState>();
   late final DeepLinkHandler _mobileDeepLink;
-  late final AppLinks _appLinks;
   StreamSubscription<String>? _mobilelinkSubscription;
-  StreamSubscription<Uri>? _desktoplinkSubscription;
+  StreamSubscription<Uri?>? _desktoplinkSubscription;
 
   @override
   void initState() {
@@ -37,7 +38,8 @@ class MyAppState extends ConsumerState<MyApp> {
       initMobileDeepLinks();
     }
     if (isDesktop) {
-      initDesktopDeepLinks();
+      _handleIncomingLinks();
+      _handleInitialUri();
     }
   }
 
@@ -60,34 +62,6 @@ class MyAppState extends ConsumerState<MyApp> {
       themeMode: themeMode,
       navigatorKey: _navigatorKey,
       home: const Home(),
-      /*
-      home: Platform.isMacOS
-          ? StreamBuilder<Uri>(
-              stream: _appLinks.uriLinkStream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  debugPrint(snapshot.data.toString());
-                  debugPrint('opening from deep link');
-                  return DeepLinkView(
-                      key: Key(snapshot.data!.toString()),
-                      url: snapshot.data!.toString());
-                } else {
-                  return const Home();
-                }
-              })
-          : StreamBuilder<String>(
-              stream: _mobileDeepLink.state,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  debugPrint(snapshot.data);
-                  debugPrint('opening from deep link');
-                  return DeepLinkView(
-                      key: Key(snapshot.data!), url: snapshot.data!);
-                } else {
-                  return const Home();
-                }
-              }),
-              */
     );
   }
 
@@ -99,21 +73,47 @@ class MyAppState extends ConsumerState<MyApp> {
     });
   }
 
-  Future<void> initDesktopDeepLinks() async {
-    _appLinks = AppLinks();
-
-    // Check initial link if app was in cold state (terminated)
-    final appLink = await _appLinks.getInitialAppLink();
-    if (appLink != null) {
-      debugPrint('getInitialAppLink: $appLink');
-      openDesktopAppLink(appLink);
+  /// Handle incoming links - the ones that the app will recieve from the OS
+  /// while already started.
+  void _handleIncomingLinks() {
+    if (!kIsWeb) {
+      // It will handle app links while the app is already started - be it in
+      // the foreground or in the background.
+      _desktoplinkSubscription = uriLinkStream.listen((Uri? uri) {
+        if (uri != null) {
+          debugPrint('onAppLink: $uri');
+          openDesktopAppLink(uri);
+        }
+      }, onError: (Object err) {
+//
+      });
     }
+  }
 
-    // Handle link when app is in warm state (front or background)
-    _desktoplinkSubscription = _appLinks.uriLinkStream.listen((uri) {
-      debugPrint('onAppLink: $uri');
-      openDesktopAppLink(uri);
-    });
+  /// Handle the initial Uri - the one the app was started with
+  ///
+  /// **ATTENTION**: `getInitialLink`/`getInitialUri` should be handled
+  /// ONLY ONCE in your app's lifetime, since it is not meant to change
+  /// throughout your app's life.
+  ///
+  /// We handle all exceptions, since it is called from initState.
+  Future<void> _handleInitialUri() async {
+    // In this example app this is an almost useless guard, but it is here to
+    // show we are not going to call getInitialUri multiple times, even if this
+    // was a weidget that will be disposed of (ex. a navigation route change).
+
+    try {
+      final uri = await getInitialUri();
+      if (uri != null) {
+        debugPrint('onAppLink: $uri');
+        openDesktopAppLink(uri);
+      }
+    } on PlatformException {
+      // Platform messages may fail but we ignore the exception
+      debugPrint('falied to get initial uri');
+    } on FormatException catch (err) {
+      debugPrint(err.toString());
+    }
   }
 
   void openMobileAppLink(String url) {
@@ -124,7 +124,8 @@ class MyAppState extends ConsumerState<MyApp> {
         paliBookId: paliBookId,
         pageNumber: int.parse(pageNumber),
       );
-      _navigatorKey.currentState?.pushAndRemoveUntil(route, (Route<dynamic> route) => false);
+      _navigatorKey.currentState
+          ?.pushAndRemoveUntil(route, (Route<dynamic> route) => false);
     }
   }
 
@@ -139,8 +140,10 @@ class MyAppState extends ConsumerState<MyApp> {
         paliBookId: paliBookId,
         pageNumber: int.parse(pageNumber),
       );
-      _navigatorKey.currentState?.pushAndRemoveUntil(route, (Route<dynamic> route) => false);
-    }
+      
+      _navigatorKey.currentState
+          ?.pushAndRemoveUntil(route, (Route<dynamic> route) => false);
+      }
   }
 
   MaterialPageRoute nsyChoiceRoute(

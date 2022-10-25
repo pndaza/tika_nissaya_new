@@ -30,15 +30,19 @@ class DatabaseHelper {
   _initDatabase() async {
     // print('initializing Database');
     late String databasesDirPath;
+    if (Platform.isAndroid) {
+      final dir = await getApplicationSupportDirectory();
+      databasesDirPath = dir.path;
+    }
 
-    if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+    if (Platform.isIOS || Platform.isMacOS) {
       databasesDirPath = await getDatabasesPath();
     }
     if (Platform.isLinux || Platform.isWindows) {
-      final docDirPath = await getApplicationDocumentsDirectory();
+      final docDirPath = await getApplicationSupportDirectory();
       databasesDirPath = docDirPath.path;
     }
-    
+
     var dbFilePath = join(databasesDirPath, DatabaseInfo.dbName);
 
     var exists = await databaseExists(dbFilePath);
@@ -77,7 +81,8 @@ class DatabaseHelper {
 
   Future<void> _saveDatabaseFromAssets({required String dbFilePath}) async {
     // Copy from asset
-    const dbFileAssetsPath =  "${DatabaseInfo.assetsPath}/${DatabaseInfo.dbName}";
+    const dbFileAssetsPath =
+        "${DatabaseInfo.assetsPath}/${DatabaseInfo.dbName}";
     await _copyDatabase(assetsPath: dbFileAssetsPath, destination: dbFilePath);
 
     // save to pref
@@ -90,7 +95,7 @@ class DatabaseHelper {
     ByteData data = await rootBundle.load(assetsPath);
     List<int> bytes =
         data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-
+    print(destination);
     await File(destination).writeAsBytes(bytes, flush: true);
   }
 

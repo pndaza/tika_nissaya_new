@@ -29,10 +29,10 @@ dependencies:
   flutter_widget_from_html_core: ^0.8.5+3
   sqflite: ^2.1.0
   sqflite_common_ffi: ^2.1.1+1
-  # sqlite3_flutter_libs:
+  sqlite3_flutter_libs:
   asset_pdf_viewer:
-    # path: packages/asset_pdf_viewer_mobile
-    path: packages/asset_pdf_viewer_desktop
+    path: packages/asset_pdf_viewer_mobile
+    # path: packages/asset_pdf_viewer_desktop
   # app_links: ^3.2.0
   # url_protocol: ^1.0.0
   uni_links_desktop: ^0.1.3

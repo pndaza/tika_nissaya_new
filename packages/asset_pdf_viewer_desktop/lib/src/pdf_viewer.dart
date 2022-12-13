@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:native_pdf_renderer/native_pdf_renderer.dart';
 import 'package:vs_scrollbar/vs_scrollbar.dart';
 import 'dart:io';
@@ -31,16 +32,32 @@ class AssetPdfViewer extends StatefulWidget {
 
 class _AssetPdfViewerState extends State<AssetPdfViewer> {
   ScrollController? _scrollController;
+  late final Future<PdfInfo> pdfInfo;
+  late final int initialPage;
+  bool isNeedScrollToTop = false;
+
+  late int currentPageIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    pdfInfo = _loadPdf(widget.assetPath);
+    initialPage = widget.pdfController?.intialPage ?? 1;
+    currentPageIndex = initialPage - 1;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final pdfInfo = _loadPdf(widget.assetPath);
-    final initialPage = widget.pdfController?.intialPage ?? 1;
-
+    WidgetsBinding.instance.addPostFrameCallback((_) => _gotoTopOfpage());
+    //
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         final parentWidth = constraints.maxWidth;
         final parentHeight = constraints.maxHeight;
+
+        if (parentHeight < parentWidth) {
+          isNeedScrollToTop = true && widget.scrollDirection == Axis.vertical;
+        }
 
         return FutureBuilder(
           future: pdfInfo,
@@ -65,7 +82,51 @@ class _AssetPdfViewerState extends State<AssetPdfViewer> {
             widget.pdfController
                 ?.attachController(_scrollController as PageController);
 
-            return _buildPdfView(context, pdfInfo, initialPage);
+            return Focus(
+                onKey: (node, event) {
+                  if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+                    if (widget.scrollDirection == Axis.horizontal) {
+                      widget.pdfController
+                          ?.gotoPage((currentPageIndex + 1) - 1);
+                    }
+
+                    return KeyEventResult.handled;
+                  }
+                  if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+                    if (widget.scrollDirection == Axis.horizontal) {
+                      widget.pdfController
+                          ?.gotoPage((currentPageIndex + 1) + 1);
+                    }
+
+                    return KeyEventResult.handled;
+                  }
+
+                  if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+                    if (widget.scrollDirection == Axis.vertical) {
+                      final offset = _scrollController?.offset;
+                      if (offset != null) {
+                        _scrollController
+                            ?.jumpTo(offset - 330); // just estimate
+                      }
+                    }
+
+                    return KeyEventResult.handled;
+                  }
+                  if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+                    if (widget.scrollDirection == Axis.vertical) {
+                      final offset = _scrollController?.offset;
+                      if (offset != null) {
+                        _scrollController
+                            ?.jumpTo(offset + 330); // just estimate
+                      }
+                    }
+
+                    return KeyEventResult.handled;
+                  }
+
+                  return KeyEventResult.ignored;
+                },
+                child: _buildPdfView(context, pdfInfo, initialPage));
           },
         );
       },
@@ -91,13 +152,16 @@ class _AssetPdfViewerState extends State<AssetPdfViewer> {
             scrollDirection: widget.scrollDirection,
             pageSnapping:
                 widget.scrollDirection == Axis.horizontal ? true : false,
-            onPageChanged: (index) => widget.onPageChanged?.call(index + 1),
+            onPageChanged: (index) {
+              widget.onPageChanged?.call(index + 1);
+              currentPageIndex = index;
+            },
             itemCount: pdfInfo.pageCount,
             itemBuilder: (context, index) {
               return Container(
                 alignment: Alignment.center,
-                // margin: EdgeInsets.all(4),
-                padding: const EdgeInsets.all(1),
+                margin: const EdgeInsets.all(1),
+                // padding: const EdgeInsets.all(1),
                 color: _getBackGroundColor(widget.colorMode),
                 child: PdfPageView(
                   pdfDocument: pdfInfo.document,
@@ -146,6 +210,25 @@ class _AssetPdfViewerState extends State<AssetPdfViewer> {
         return const Color.fromARGB(255, 255, 255, 213);
       case ColorMode.grayscale:
         return Colors.grey;
+    }
+  }
+
+  void _gotoTopOfpage() async {
+    // debugPrint('need scroll: $isNeedScrollToTop');
+    if (!isNeedScrollToTop) return;
+
+    // _scroll controller is still not initialized
+    // need to wait
+    await Future.delayed(const Duration(milliseconds: 150));
+
+    double? offset = _scrollController?.offset;
+    if (offset == null) return;
+
+    offset = offset - 500;
+    if (offset >= 0) {
+      _scrollController?.jumpTo(offset);
+    } else {
+      _scrollController?.jumpTo(0);
     }
   }
 }

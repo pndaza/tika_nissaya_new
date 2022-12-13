@@ -52,7 +52,8 @@ class PdfPageView extends StatelessWidget {
           builder: (context, snapShot) {
             if (!snapShot.hasData) {
               return const Center(
-                child: CircularProgressIndicator(),
+                // child: CircularProgressIndicator(),
+                child: SizedBox.shrink(),
               );
             }
             final PdfPage pdfPage = snapShot.data!;
@@ -67,7 +68,8 @@ class PdfPageView extends StatelessWidget {
                 builder: (context, snapShot) {
                   if (!snapShot.hasData) {
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      // child: CircularProgressIndicator(value: 100,),
+                      child: SizedBox.shrink(),
                     );
                   }
 

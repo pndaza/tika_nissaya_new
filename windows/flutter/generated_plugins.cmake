@@ -3,7 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  sqlite3_flutter_libs
+  native_pdf_renderer
   uni_links_desktop
 )
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:native_pdf_renderer/native_pdf_renderer.dart';
 import 'package:vs_scrollbar/vs_scrollbar.dart';
 import 'dart:io';
@@ -34,8 +33,7 @@ class _AssetPdfViewerState extends State<AssetPdfViewer> {
   ScrollController? _scrollController;
   late final Future<PdfInfo> pdfInfo;
   late final int initialPage;
-  bool isNeedScrollToTop = false;
-
+  late double viewportRatio;
   late int currentPageIndex;
 
   @override
@@ -55,9 +53,7 @@ class _AssetPdfViewerState extends State<AssetPdfViewer> {
         final parentWidth = constraints.maxWidth;
         final parentHeight = constraints.maxHeight;
 
-        if (parentHeight < parentWidth) {
-          isNeedScrollToTop = true && widget.scrollDirection == Axis.vertical;
-        }
+        viewportRatio = parentHeight / parentWidth;
 
         return FutureBuilder(
           future: pdfInfo,
@@ -82,51 +78,7 @@ class _AssetPdfViewerState extends State<AssetPdfViewer> {
             widget.pdfController
                 ?.attachController(_scrollController as PageController);
 
-            return Focus(
-                onKey: (node, event) {
-                  if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-                    if (widget.scrollDirection == Axis.horizontal) {
-                      widget.pdfController
-                          ?.gotoPage((currentPageIndex + 1) - 1);
-                    }
-
-                    return KeyEventResult.handled;
-                  }
-                  if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
-                    if (widget.scrollDirection == Axis.horizontal) {
-                      widget.pdfController
-                          ?.gotoPage((currentPageIndex + 1) + 1);
-                    }
-
-                    return KeyEventResult.handled;
-                  }
-
-                  if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-                    if (widget.scrollDirection == Axis.vertical) {
-                      final offset = _scrollController?.offset;
-                      if (offset != null) {
-                        _scrollController
-                            ?.jumpTo(offset - 330); // just estimate
-                      }
-                    }
-
-                    return KeyEventResult.handled;
-                  }
-                  if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-                    if (widget.scrollDirection == Axis.vertical) {
-                      final offset = _scrollController?.offset;
-                      if (offset != null) {
-                        _scrollController
-                            ?.jumpTo(offset + 330); // just estimate
-                      }
-                    }
-
-                    return KeyEventResult.handled;
-                  }
-
-                  return KeyEventResult.ignored;
-                },
-                child: _buildPdfView(context, pdfInfo, initialPage));
+            return _buildPdfView(context, pdfInfo, initialPage);
           },
         );
       },
@@ -215,8 +167,7 @@ class _AssetPdfViewerState extends State<AssetPdfViewer> {
 
   void _gotoTopOfpage() async {
     // debugPrint('need scroll: $isNeedScrollToTop');
-    if (!isNeedScrollToTop) return;
-
+    if (viewportRatio > 1.55) return;
     // _scroll controller is still not initialized
     // need to wait
     await Future.delayed(const Duration(milliseconds: 150));
@@ -224,11 +175,35 @@ class _AssetPdfViewerState extends State<AssetPdfViewer> {
     double? offset = _scrollController?.offset;
     if (offset == null) return;
 
-    offset = offset - 500;
-    if (offset >= 0) {
-      _scrollController?.jumpTo(offset);
+    late double value;
+    if (viewportRatio > 1.4) {
+      value = 50;
+    } else if (viewportRatio > 1.3) {
+      value = 80;
+    } else if (viewportRatio > 1.2) {
+      value = 110;
+    } else if (viewportRatio > 1.1) {
+      value = 150;
+    } else if (viewportRatio > 1) {
+      value = 200;
+    } else if (viewportRatio > 0.9) {
+      value = 260;
+    } else if (viewportRatio > 0.8) {
+      value = 320;
+    } else if (viewportRatio > 0.7) {
+      value = 400;
+    } else if (viewportRatio > 0.6) {
+      value = 500;
     } else {
+      value = 600;
+    }
+    // estimate
+    offset = offset - value;
+    if (offset < 0) {
+      // first page case
       _scrollController?.jumpTo(0);
+    } else {
+      _scrollController?.jumpTo(offset);
     }
   }
 }

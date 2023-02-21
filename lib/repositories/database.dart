@@ -95,7 +95,6 @@ class DatabaseHelper {
     ByteData data = await rootBundle.load(assetsPath);
     List<int> bytes =
         data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-    print(destination);
     await File(destination).writeAsBytes(bytes, flush: true);
   }
 

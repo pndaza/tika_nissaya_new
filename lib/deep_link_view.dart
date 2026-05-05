@@ -4,11 +4,11 @@ import 'screens/home/home_page.dart';
 import 'screens/nsy_list/nsy_choice.dart';
 
 class DeepLinkView extends StatefulWidget {
-  const DeepLinkView({Key? key, required this.url}) : super(key: key);
+  const DeepLinkView({super.key, required this.url});
   final String url;
 
   @override
-  _DeepLinkViewState createState() => _DeepLinkViewState();
+  State<DeepLinkView> createState() => _DeepLinkViewState();
 }
 
 class _DeepLinkViewState extends State<DeepLinkView> {

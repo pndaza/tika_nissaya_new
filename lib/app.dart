@@ -18,7 +18,7 @@ import 'utils/platform_helper.dart';
 // const readerRoute = '/reader';
 
 class MyApp extends ConsumerStatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   ConsumerState<MyApp> createState() => MyAppState();

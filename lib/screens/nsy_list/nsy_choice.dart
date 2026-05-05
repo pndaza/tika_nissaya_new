@@ -9,11 +9,11 @@ import 'nsy_grid_view.dart';
 
 class NsyChoice extends ConsumerWidget {
   const NsyChoice({
-    Key? key,
+    super.key,
     required this.paliBookID,
     required this.paliBookPageNumber,
     this.isOpenFromDeepLink = false,
-  }) : super(key: key);
+  });
   final String paliBookID;
   final int paliBookPageNumber;
   final bool isOpenFromDeepLink;
@@ -45,7 +45,7 @@ class NsyChoice extends ConsumerWidget {
               onItemClicked: (nsyBook) =>
                   ref.read(nsyChoiceViewController).openBook(context, nsyBook)),
           loading: () => const LoadingView(),
-          error: (_, __) => const ErrorView()),
+          error: (_, _) => const ErrorView()),
     );
   }
 }

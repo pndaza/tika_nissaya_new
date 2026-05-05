@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/nsybook.dart';
 import '../../repositories/database.dart';
 import '../../repositories/nsy_book_repo.dart';
-import '../reader/book_reader.dart';
+import '../reader/reader_page.dart';
 
 final nsyBookRepoProvider =
     Provider((_) => DatabaseNsyBookRepository(DatabaseHelper(), NsyBookDao()));
@@ -25,7 +25,7 @@ final nsyChoiceViewController = Provider((_) => NsyChoiceViewController());
 class NsyChoiceViewController {
   void openBook(BuildContext context, NsyBook nsyBook) {
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => BookReader(
+        builder: (_) => ReaderPage(
             id: nsyBook.id, name: nsyBook.name, pageNumber: nsyBook.gotoPage)));
   }
 }

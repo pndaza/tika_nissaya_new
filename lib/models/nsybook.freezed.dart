@@ -88,8 +88,8 @@ abstract class _$NsyBookCopyWith<$Res> implements $NsyBookCopyWith<$Res> {
 /// @nodoc
 class __$NsyBookCopyWithImpl<$Res> extends _$NsyBookCopyWithImpl<$Res>
     implements _$NsyBookCopyWith<$Res> {
-  __$NsyBookCopyWithImpl(_NsyBook _value, $Res Function(_NsyBook) _then)
-      : super(_value, (v) => _then(v as _NsyBook));
+  __$NsyBookCopyWithImpl(_NsyBook value, $Res Function(_NsyBook) then)
+      : super(value, (v) => then(v as _NsyBook));
 
   @override
   _NsyBook get _value => super._value as _NsyBook;

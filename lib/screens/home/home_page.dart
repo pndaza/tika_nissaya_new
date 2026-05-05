@@ -7,7 +7,7 @@ import 'home_view_controller.dart';
 import 'widgets/book_list.dart';
 
 class Home extends ConsumerWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

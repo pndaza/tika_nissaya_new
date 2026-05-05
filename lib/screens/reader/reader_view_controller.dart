@@ -1,4 +1,4 @@
-import 'package:asset_pdf_viewer/asset_pdf_viewer.dart';
+import 'package:just_pdf_viewer/just_pdf_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -1,7 +1,7 @@
 import UIKit
 import Flutter
 
-@UIApplicationMain
+@main
 @objc class AppDelegate: FlutterAppDelegate {
 
   private var methodChannel: FlutterMethodChannel?
@@ -14,7 +14,7 @@ import Flutter
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
 
-    let controller = window.rootViewController as! FlutterViewController
+    let controller = window?.rootViewController as! FlutterViewController
     methodChannel = FlutterMethodChannel(name: "mm.pndaza.tikanissaya/channel", binaryMessenger: controller.binaryMessenger)
     eventChannel = FlutterEventChannel(name: "mm.pndaza.tikanissaya/events", binaryMessenger: controller.binaryMessenger)
    

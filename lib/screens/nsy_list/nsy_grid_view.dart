@@ -5,10 +5,10 @@ import 'nsy_grid_item.dart';
 
 class NsyGirdView extends StatelessWidget {
   const NsyGirdView({
-    Key? key,
+    super.key,
     required this.nsyBooks,
     required this.onItemClicked,
-  }) : super(key: key);
+  });
 
   final List<NsyBook> nsyBooks;
   final Function(NsyBook) onItemClicked;

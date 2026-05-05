@@ -136,8 +136,8 @@ abstract class _$BookCopyWith<$Res> implements $BookCopyWith<$Res> {
 /// @nodoc
 class __$BookCopyWithImpl<$Res> extends _$BookCopyWithImpl<$Res>
     implements _$BookCopyWith<$Res> {
-  __$BookCopyWithImpl(_Book _value, $Res Function(_Book) _then)
-      : super(_value, (v) => _then(v as _Book));
+  __$BookCopyWithImpl(_Book value, $Res Function(_Book) then)
+      : super(value, (v) => then(v as _Book));
 
   @override
   _Book get _value => super._value as _Book;

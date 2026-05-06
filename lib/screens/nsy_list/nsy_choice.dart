@@ -61,7 +61,7 @@ class NsyChoice extends ConsumerWidget {
           },
         ),
         loading: () => const LoadingView(),
-        error: (_, __) => const ErrorView(),
+        error: (_, _) => const ErrorView(),
       ),
     );
   }

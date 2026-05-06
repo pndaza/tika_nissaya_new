@@ -3,6 +3,7 @@ import 'database.dart';
 
 abstract class BookRepository {
   Future<List<Book>> fetchBooks();
+  Future<String> getBookName({required String id});
 }
 
 class DatabaseBookRepository extends BookRepository {
@@ -23,5 +24,15 @@ class DatabaseBookRepository extends BookRepository {
       bookDao.columnCount
     ]);
     return bookDao.fromList(results);
+  }
+
+    @override
+  Future<String> getBookName({required String id}) async {
+    final db = await databaseProvider.database;
+    final results = await db.query(bookDao.tableName,
+        columns: [bookDao.columnName],
+        where: '${bookDao.columnID} = ?',
+        whereArgs: [id]);
+    return results.first[bookDao.columnName] as String;
   }
 }

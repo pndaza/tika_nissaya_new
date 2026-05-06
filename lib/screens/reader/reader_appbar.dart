@@ -13,15 +13,12 @@ class ReaderAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scrollDirection = ref.watch(scrollDirectionProvider);
-        final pdfColorMode = ref.watch(pdfColorModeProvider);
-
+    final pdfColorMode = ref.watch(pdfColorModeProvider);
     final isFullScreenMode = ref.watch(fullScreenStateProvider);
 
     if (isFullScreenMode) {
       final statusBarHeight = MediaQuery.of(context).padding.top;
-      return Container(
-        height: statusBarHeight,
-      );
+      return SizedBox(height: statusBarHeight);
     }
 
     return AppBar(
@@ -29,37 +26,47 @@ class ReaderAppBar extends ConsumerWidget implements PreferredSizeWidget {
       centerTitle: true,
       actions: [
         IconButton(
-            icon: Icon(scrollDirection == Axis.horizontal
+          icon: Icon(
+            scrollDirection == Axis.horizontal
                 ? Icons.swap_horiz
-                : Icons.swap_vert),
-            onPressed: () async {
-              ref
-                  .read(readerViewController)
-                  .toggleScrollDirection(scrollDirection);
-            }),
-            PopupMenuButton<ColorMode>(
+                : Icons.swap_vert,
+          ),
+          onPressed: () async {
+            ref
+                .read(readerViewController)
+                .toggleScrollDirection(scrollDirection);
+          },
+        ),
+        PopupMenuButton<ColorMode>(
           icon: const Icon(Icons.palette_outlined),
           initialValue: pdfColorMode,
-          itemBuilder: (_) => const [
-            PopupMenuItem(
+          itemBuilder: (_) => [
+            CheckedPopupMenuItem(
+              padding: EdgeInsets.zero,
+              checked: ColorMode.day == pdfColorMode,
               value: ColorMode.day,
-              child: Text('အဖြူ'),
+              child: const Text('အဖြူ'),
             ),
-            PopupMenuItem(
+            CheckedPopupMenuItem(
+              padding: EdgeInsets.zero,
+              checked: ColorMode.night == pdfColorMode,
               value: ColorMode.night,
-              child: Text('အမဲ'),
+              child: const Text('အမဲ'),
             ),
-            PopupMenuItem(
-              padding: EdgeInsets.only(left: 16),
+            CheckedPopupMenuItem(
+              padding: EdgeInsets.zero,
+              checked: ColorMode.sepia == pdfColorMode,
+              // padding: EdgeInsets.only(left: 16),
               value: ColorMode.sepia,
-              child: Text('ဝါကျင့်ကျင့်'),
+              child: const Text('ဝါကျင့်ကျင့်'),
             ),
           ],
           onSelected: (colorMode) {
             ref.read(readerViewController).changePdfColorMode(colorMode);
           },
           shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15.0))),
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          ),
         ),
       ],
     );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tika_nissaya/screens/home/home_page.dart';
+import 'package:tika_nissaya/screens/reader/reader_page.dart';
+import 'package:tika_nissaya/utils/navigation_helper.dart';
 
 import '../../widgets/error_view.dart';
 import '../../widgets/loading_view.dart';
@@ -20,8 +22,9 @@ class NsyChoice extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final nsyBookState =
-        ref.watch(nsyBooksProvider('$paliBookID-$paliBookPageNumber'));
+    final nsyBookState = ref.watch(
+      nsyBooksProvider('$paliBookID-$paliBookPageNumber'),
+    );
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -29,8 +32,9 @@ class NsyChoice extends ConsumerWidget {
             if (isOpenFromDeepLink) {
               Navigator.pop(context);
               // back to homepage
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => const Home()));
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const Home()));
             } else {
               Navigator.pop(context);
             }
@@ -40,12 +44,25 @@ class NsyChoice extends ConsumerWidget {
         title: const Text('နိဿယ မူကွဲများ'),
       ),
       body: nsyBookState.when(
-          data: (nsyBooks) => NsyGirdView(
-              nsyBooks: nsyBooks,
-              onItemClicked: (nsyBook) =>
-                  ref.read(nsyChoiceViewController).openBook(context, nsyBook)),
-          loading: () => const LoadingView(),
-          error: (_, _) => const ErrorView()),
+        data: (nsyBooks) => NsyGirdView(
+          nsyBooks: nsyBooks,
+          onItemClicked: (nsyBook) {
+            context.goto(
+              ReaderPage(
+                id: nsyBook.id,
+                name: nsyBook.name,
+                pageNumber: nsyBook.gotoPage,
+              ),
+            );
+            // ref.read(nsyChoiceViewController).openBook(context, nsyBook);
+            ref
+                .read(nsyChoiceViewController)
+                .onNsyBookClicked(ref, nsyBook, paliBookID, paliBookPageNumber);
+          },
+        ),
+        loading: () => const LoadingView(),
+        error: (_, __) => const ErrorView(),
+      ),
     );
   }
 }

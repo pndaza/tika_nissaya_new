@@ -5,6 +5,8 @@ import 'package:tika_nissaya/screens/home/sub_pages/recent_page/recent_page.dart
 import 'package:tika_nissaya/screens/info/info_page.dart';
 import 'package:tika_nissaya/utils/navigation_helper.dart';
 import 'package:tika_nissaya/utils/platform_helper.dart';
+import 'package:tika_nissaya/utils/window_config.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'home_view_controller.dart';
 
@@ -24,7 +26,7 @@ class Home extends ConsumerStatefulWidget {
   HomeState createState() => HomeState();
 }
 
-class HomeState extends ConsumerState<Home> {
+class HomeState extends ConsumerState<Home> with WindowListener {
   final List<NavDestination> destinations = <NavDestination>[
     NavDestination(label: 'ပင်မ', iconData: Icons.home),
     NavDestination(label: 'ကြည့်ဆဲ', iconData: Icons.history),
@@ -36,12 +38,47 @@ class HomeState extends ConsumerState<Home> {
   void initState() {
     super.initState();
     pageController = PageController(initialPage: selectedIndex);
+    if (isDesktop) {
+      windowManager.addListener(this);
+      windowManager.setPreventClose(true);
+    }
   }
 
   @override
   void dispose() {
     pageController.dispose();
+    if (isDesktop) {
+      windowManager.removeListener(this);
+    }
     super.dispose();
+  }
+
+  @override
+  void onWindowClose() async {
+    final isMaximized = await windowManager.isMaximized();
+
+    if (!isMaximized) {
+      final position = await windowManager.getPosition();
+      final size = await windowManager.getSize();
+      await WindowConfig.saveWindowConfig({
+        'left': position.dx,
+        'top': position.dy,
+        'width': size.width,
+        'height': size.height,
+        'isMaximized': 0.0,
+      });
+    } else {
+      await WindowConfig.saveWindowConfig({
+        'isMaximized': 1.0,
+      });
+    }
+
+    await windowManager.destroy();
+  }
+
+  @override
+  void onWindowFocus() {
+    setState(() {});
   }
 
   @override

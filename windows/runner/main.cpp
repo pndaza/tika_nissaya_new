@@ -5,17 +5,32 @@
 #include "flutter_window.h"
 #include "utils.h"
 
-#include <uni_links_desktop/uni_links_desktop_plugin.h>
+#include <app_links/app_links_plugin_c_api.h>
 
 int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
                       _In_ wchar_t *command_line, _In_ int show_command) {
 
   HWND hwnd = ::FindWindow(L"FLUTTER_RUNNER_WIN32_WINDOW", L"Tika Nissaya");
   if (hwnd != NULL) {
-    DispatchToUniLinksDesktop(hwnd);
+    SendAppLink(hwnd);
 
-    ::ShowWindow(hwnd, SW_NORMAL);
-    ::SetForegroundWindow(hwnd);
+    WINDOWPLACEMENT place = { sizeof(WINDOWPLACEMENT) };
+    GetWindowPlacement(hwnd, &place);
+
+    switch(place.showCmd) {
+      case SW_SHOWMAXIMIZED:
+          ShowWindow(hwnd, SW_SHOWMAXIMIZED);
+          break;
+      case SW_SHOWMINIMIZED:
+          ShowWindow(hwnd, SW_RESTORE);
+          break;
+      default:
+          ShowWindow(hwnd, SW_NORMAL);
+          break;
+    }
+
+    SetWindowPos(0, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOSIZE | SWP_NOMOVE);
+    SetForegroundWindow(hwnd);
     return EXIT_FAILURE;
   }
 

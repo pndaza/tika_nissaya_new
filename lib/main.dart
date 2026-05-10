@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:uni_links_desktop/uni_links_desktop.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'app.dart';
@@ -24,10 +23,6 @@ Future<void> main() async {
   }
 
   WidgetsFlutterBinding.ensureInitialized();
-
-  if (Platform.isWindows) {
-    registerProtocol('tikanissaya');
-  }
 
   if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
     final windowConfig = await WindowConfig.loadWindowConfig();

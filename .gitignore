@@ -103,6 +103,10 @@ unlinked_spec.ds
 # macOS
 **/macos/Flutter/GeneratedPluginRegistrant.swift
 
+# Generated files
+**/*.freezed.dart
+**/*.g.dart
+
 # Coverage
 coverage/
 

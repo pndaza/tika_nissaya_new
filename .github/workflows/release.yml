@@ -1,0 +1,52 @@
+name: Build & Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. 2.3.0)'
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.x'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Windows x64
+        run: flutter build windows --release
+
+      - name: Install Inno Setup
+        run: |
+          $innoUrl = "https://files.jrsoftware.org/is/6/innosetup-6.4.1.exe"
+          $installer = "$env:TEMP\innosetup.exe"
+          Invoke-WebRequest -Uri $innoUrl -OutFile $installer
+          Start-Process -Wait -FilePath $installer -ArgumentList "/VERYSILENT /NORESTART /SP-"
+
+      - name: Build installer
+        run: |
+          $issContent = Get-Content "installer.iss" -Raw
+          $issContent = $issContent -replace '\{#SetupSetting\("AppVersion"\)}', '${{ inputs.version }}'
+          Set-Content -Path "installer_versioned.iss" -Value $issContent -Encoding UTF8
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "installer_versioned.iss"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ inputs.version }}
+          name: Tika Nissaya v${{ inputs.version }}
+          files: output/TikaNissaya_Setup.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

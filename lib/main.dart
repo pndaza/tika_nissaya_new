@@ -1,6 +1,7 @@
-import 'dart:io' show Platform;
+import 'dart:io' show Platform, Process;
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
@@ -15,6 +16,7 @@ final myLogger = Logger();
 
 const _defaultSize = Size(800, 600);
 const _minSize = Size(400, 300);
+const _scheme = 'tikanissaya';
 
 Future<void> main() async {
   if (Platform.isWindows || Platform.isLinux) {
@@ -23,6 +25,10 @@ Future<void> main() async {
   }
 
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (kDebugMode && Platform.isWindows) {
+    _registerUrlScheme();
+  }
 
   if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
     final windowConfig = await WindowConfig.loadWindowConfig();
@@ -80,4 +86,18 @@ bool _isWindowOnScreen(Rect bounds) {
     if (bounds.overlaps(screen)) return true;
   }
   return bounds.left >= 0 && bounds.top >= 0;
+}
+
+void _registerUrlScheme() {
+  final exe = Platform.resolvedExecutable;
+  Process.runSync('reg', [
+    'add',
+    'HKCU\\Software\\Classes\\$_scheme',
+    '/v', 'URL Protocol', '/d', '', '/f',
+  ]);
+  Process.runSync('reg', [
+    'add',
+    'HKCU\\Software\\Classes\\$_scheme\\shell\\open\\command',
+    '/ve', '/d', '"$exe" "%1"', '/f',
+  ]);
 }

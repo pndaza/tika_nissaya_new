@@ -2,15 +2,18 @@
 #define AppPublisher "PnDaza"
 #define AppURL "https://github.com/pndaza/tika_nissaya_new"
 #define AppExeName "tika_nissaya.exe"
+#ifndef AppVersion
+#define AppVersion "1.0.0"
+#endif
 
 [Setup]
 AppId={{38337PnDaza-TikaNissaya}
 AppName={#AppName}
-AppVersion={#SetupSetting("AppVersion")}
+AppVersion={#AppVersion}
 AppPublisher={#AppPublisher}
 AppPublisherURL={#AppURL}
 DefaultDirName={autopf}\{#AppName}
-DefaultGroupName={{#AppName}
+DefaultGroupName={#AppName}
 DisableProgramGroupPage=yes
 OutputDir=output
 OutputBaseFilename=TikaNissaya_Setup

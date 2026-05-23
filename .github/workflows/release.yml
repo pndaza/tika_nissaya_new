@@ -40,10 +40,7 @@ jobs:
 
       - name: Build installer
         run: |
-          $issContent = Get-Content "installer.iss" -Raw
-          $issContent = $issContent -replace '\{#SetupSetting\("AppVersion"\)}', '${{ inputs.version }}'
-          Set-Content -Path "installer_versioned.iss" -Value $issContent -Encoding UTF8
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "installer_versioned.iss"
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion="${{ inputs.version }}" "installer.iss"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2

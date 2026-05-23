@@ -7,7 +7,7 @@
 #endif
 
 [Setup]
-AppId={{38337PnDaza-TikaNissaya}
+AppId=PnDaza-TikaNissaya
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppPublisher={#AppPublisher}

@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Run build_runner (freezed)
+        run: dart run build_runner build --delete-conflicting-outputs
+
       - name: Build Windows x64
         run: flutter build windows --release
 

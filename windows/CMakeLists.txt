@@ -94,3 +94,9 @@ install(DIRECTORY "${PROJECT_BUILD_DIR}/${FLUTTER_ASSET_DIR_NAME}"
 install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
   CONFIGURATIONS Profile;Release
   COMPONENT Runtime)
+
+# Copy native assets (e.g. sqlite3.dll) to the build output.
+install(DIRECTORY "${PROJECT_BUILD_DIR}/native_assets/windows/"
+  DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+  COMPONENT Runtime
+  FILES_MATCHING PATTERN "*.dll")

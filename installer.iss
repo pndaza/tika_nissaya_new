@@ -28,7 +28,6 @@ UninstallDisplayIcon={app}\{#AppExeName}
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
-Name: "myanmar"; MessagesFile: "compiler:Languages\Myanmar.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"

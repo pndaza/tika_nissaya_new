@@ -50,6 +50,6 @@ jobs:
         with:
           tag_name: v${{ inputs.version }}
           name: Tika Nissaya v${{ inputs.version }}
-          files: output/TikaNissaya_Setup.exe
+          files: output/TikaNissaya_Setup_${{ inputs.version }}.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

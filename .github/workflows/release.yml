@@ -31,6 +31,9 @@ jobs:
       - name: Build Windows x64
         run: flutter build windows --release
 
+      - name: Copy sqlite3.dll (x64)
+        run: Copy-Item "vendor\windows_x64\sqlite3.dll" "build\windows\x64\runner\Release\sqlite3.dll"
+
       - name: Install Inno Setup
         run: |
           $innoUrl = "https://github.com/jrsoftware/issrc/releases/download/is-6_7_2/innosetup-6.7.2.exe"
